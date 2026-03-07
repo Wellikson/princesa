@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lovely Lens - Spotify Edition 🤍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --spotify-black: #121212;
+            --spotify-light-black: #181818;
+            --spotify-grey: #b3b3b3;
+            --cor-primaria: #d88181;
+            --cor-moldura: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(to bottom, #2a2a2a 0%, var(--spotify-black) 50%);
+            background-attachment: fixed;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            overflow-x: hidden;
+            padding-bottom: 110px;
+        }
+
+        /* --- PLAYER SPOTIFY FIXO --- */
+        .spotify-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            background-color: #000;
+            border-top: 1px solid #282828;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 2000;
+            display: none;
+        }
+
+        .player-left { display: flex; align-items: center; overflow: hidden; }
+        .album-art {
+            width: 55px; height: 55px;
+            border-radius: 4px;
+            background: url('ft1.jpg') center/cover;
+            margin-right: 12px;
+        }
+        .track-name { font-size: 0.9rem; font-weight: 700; white-space: nowrap; }
+        .artist-name { font-size: 0.75rem; color: var(--spotify-grey); }
+
+        /* --- OVERLAY --- */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--spotify-black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            transition: opacity 0.8s ease;
+        }
+        .btn-abrir {
+            padding: 16px 36px;
+            border: none;
+            background: var(--cor-primaria);
+            color: white;
+            border-radius: 500px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        /* --- CARROSSEL COM MOLDURA ESTILO ANTERIOR --- */
+        .carousel-container {
+            width: 92%;
+            max-width: 450px;
+            height: 60vh; /* Tamanho maior e retangular */
+            margin: 30px auto 20px;
+            padding: 12px;
+            background-color: var(--cor-moldura);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel { width: 100%; height: 100%; overflow: hidden; border-radius: 10px; }
+
+        .slides {
+            display: flex;
+            width: 800%; /* 8 fotos */
+            height: 100%;
+            animation: slideAnimation 32s infinite ease-in-out;
+        }
+
+        .slides img { width: 12.5%; height: 100%; object-fit: cover; }
+
+        @keyframes slideAnimation {
+            0%, 10% { transform: translateX(0); }
+            12.5%, 22.5% { transform: translateX(-12.5%); }
+            25%, 35% { transform: translateX(-25%); }
+            37.5%, 47.5% { transform: translateX(-37.5%); }
+            50%, 60% { transform: translateX(-50%); }
+            62.5%, 72.5% { transform: translateX(-62.5%); }
+            75%, 85% { transform: translateX(-75%); }
+            87.5%, 97.5% { transform: translateX(-87.5%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* --- INFO DA PLAYLIST --- */
+        .playlist-info-section {
+            text-align: center;
+            padding: 0 20px 30px;
+        }
+        .playlist-title { font-size: 2rem; font-weight: 700; margin-bottom: 5px; }
+        .playlist-sub { color: var(--spotify-grey); font-size: 0.85rem; }
+
+        /* --- SEÇÃO DE LETRAS (LYRICS) --- */
+        .lyrics-section {
+            padding: 30px;
+            margin: 20px;
+            background: #d88181;
+            border-radius: 12px;
+            color: #121212;
+        }
+        .lyrics-header { font-weight: 700; text-transform: uppercase; margin-bottom: 15px; font-size: 1rem; }
+        .letter {
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        /* --- CHUVA DE EMOJIS --- */
+        .petala { position: fixed; top: -10%; z-index: 1; animation: queda linear forwards; pointer-events: none; }
+        @keyframes queda { to { transform: translateY(110vh) rotate(360deg); } }
+
+        footer { padding: 40px; text-align: center; color: var(--spotify-grey); font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <div style="color: white; font-size: 3rem; margin-bottom: 20px;">🎵</div>
+        <button class="btn-abrir" onclick="startExperience()">Abrir Surpresa</button>
+    </div>
+
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="slides">
+                <img src="ft1.jpg"><img src="ft2.jpg"><img src="ft3.jpg"><img src="ft4.jpg">
+                <img src="ft5.jpg"><img src="ft6.jpg"><img src="ft7.jpg"><img src="ft8.jpg">
+            </div>
+        </div>
+    </div>
+
+    <div class="playlist-info-section">
+        <div class="playlist-title">Para minha Princesa</div>
+        <div class="playlist-sub">Lovely Lens • 8 lembranças especiais</div>
+    </div>
+
+    <div class="lyrics-section">
+        <div class="lyrics-header">Letras ↗️</div>
+        <div class="letter">
+Princesa,
+hoje é o Dia da Mulher, mas, sendo sincero, uma mulher como você não deveria ser lembrada apenas em uma data. Você merece ser admirada todos os dias, pelo que é, pela força que tem e pela forma tão única que carrega o seu coração.
+
+Eu admiro muito a mulher que você é. Seu jeito, sua forma de ver a vida, de sentir as coisas e até a maneira como conversa comigo… tudo isso faz com que você se torne cada vez mais especial.
+
+Você tem essa capacidade bonita de ocupar espaço nos meus pensamentos de forma natural. Aquela vontade de saber se você está bem, se dormiu bem, como foi seu dia… coisas simples, mas que mostram o quanto alguém se torna importante.
+
+E hoje, nesse Dia da Mulher, eu só quero que você nunca esqueça o valor que tem. Você é forte, especial e merece alguém que enxergue tudo isso com verdade.
+
+Se tem algo que eu desejo, é continuar tendo a chance de estar presente na sua vida, te admirando, te respeitando e descobrindo cada vez mais a mulher incrível que você é.
+
+Feliz Dia da Mulher, princesa.🤍
+        </div>
+    </div>
+
+    <div class="spotify-player" id="player">
+        <div class="player-left">
+            <div class="album-art"></div>
+            <div class="track-info">
+                <div class="track-name">Duas Vidas</div>
+                <div class="artist-name">Lovely Lens</div>
+            </div>
+        </div>
+        <div style="font-size: 1.5rem; margin-right: 10px;">⏸️</div>
+    </div>
+
+    <footer>
+        &copy; 2026 LOVELY LENS - SPOTIFY EXPERIENCE
+    </footer>
+
+    <audio id="musica" loop>
+        <source src="duasvidas.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function startExperience() {
+            document.getElementById('musica').play();
+            document.getElementById('player').style.display = 'flex';
+            const overlay = document.getElementById('overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 800);
+            setInterval(criarPetala, 500);
+        }
+
+        function criarPetala() {
+            const emojis = ['🌸', '❤️', '🌹', '✨', '💖', '🎵'];
+            const p = document.createElement('div');
+            p.classList.add('petala');
+            p.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            p.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            p.style.opacity = Math.random();
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

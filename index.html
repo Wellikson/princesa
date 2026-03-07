@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Minha Princesa 🤍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-primaria: #d88181;
+            --cor-fundo: #fdf5f5;
+            --cor-moldura: #fff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--cor-fundo);
+            font-family: 'Montserrat', sans-serif;
+            color: #4a4a4a;
+            overflow-x: hidden;
+            padding-top: 80px; 
+        }
+
+        /* --- SPOTIFY PLAYER FIXO --- */
+        .spotify-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 2000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(216, 129, 129, 0.1);
+            display: none; /* Ativado via JS */
+        }
+
+        .album-art {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            background: url('ft1.jpg') center/cover;
+            margin-right: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .track-info { flex-grow: 1; }
+        .track-name { font-size: 0.95rem; font-weight: 600; color: #333; display: block; }
+        .artist-name { font-size: 0.8rem; color: var(--cor-primaria); font-weight: 400; }
+
+        .playing-animation {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 20px;
+            margin-left: 10px;
+        }
+
+        .bar {
+            width: 3px;
+            background: var(--cor-primaria);
+            border-radius: 2px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        .bar:nth-child(2) { animation-delay: 0.2s; }
+        .bar:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 100% { height: 6px; }
+            50% { height: 20px; }
+        }
+
+        /* --- ENTRADA (OVERLAY) --- */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            transition: opacity 1s ease;
+        }
+
+        #overlay h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: var(--cor-primaria);
+        }
+
+        .btn-abrir {
+            padding: 16px 45px;
+            border: none;
+            background: var(--cor-primaria);
+            color: white;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(216, 129, 129, 0.4);
+            transition: transform 0.3s;
+        }
+        .btn-abrir:active { transform: scale(0.95); }
+
+        /* --- CARROSSEL DE 8 FOTOS --- */
+        .carousel-container {
+            width: 92%;
+            max-width: 450px;
+            height: 60vh;
+            margin: 15px auto;
+            padding: 12px;
+            background-color: var(--cor-moldura);
+            border-radius: 24px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel { width: 100%; height: 100%; overflow: hidden; border-radius: 14px; }
+
+        .slides {
+            display: flex;
+            width: 800%; /* 8 fotos */
+            height: 100%;
+            animation: slideAnimation 32s infinite ease-in-out;
+        }
+
+        .slides img { 
+            width: 12.5%; /* 100% / 8 */
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        @keyframes slideAnimation {
+            0%, 10% { transform: translateX(0); }
+            12.5%, 22.5% { transform: translateX(-12.5%); }
+            25%, 35% { transform: translateX(-25%); }
+            37.5%, 47.5% { transform: translateX(-37.5%); }
+            50%, 60% { transform: translateX(-50%); }
+            62.5%, 72.5% { transform: translateX(-62.5%); }
+            75%, 85% { transform: translateX(-75%); }
+            87.5%, 97.5% { transform: translateX(-87.5%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* --- TEXTO --- */
+        .content { padding: 40px 25px; text-align: center; }
+
+        h1 { font-family: 'Dancing Script', cursive; color: var(--cor-primaria); font-size: 2.5rem; margin-bottom: 30px; }
+
+        .letter {
+            font-size: 1.1rem;
+            text-align: left;
+            white-space: pre-line;
+            color: #555;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 30px;
+            border-radius: 25px;
+            line-height: 1.7;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+        }
+
+        /* --- CHUVA DE EMOJIS --- */
+        .petala {
+            position: fixed;
+            top: -10%;
+            font-size: 22px;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+            animation: queda linear forwards;
+        }
+
+        @keyframes queda { to { transform: translateY(110vh) rotate(360deg); } }
+
+        footer { padding: 40px; text-align: center; font-size: 0.8rem; color: #ccc; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="spotify-player" id="player">
+        <div class="album-art"></div>
+        <div class="track-info">
+            <span class="track-name">Duas Vidas</span>
+            <span class="artist-name">Tocando agora...</span>
+        </div>
+        <div class="playing-animation">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </div>
+
+    <div id="overlay">
+        <h2>Para você...</h2>
+        <button class="btn-abrir" onclick="startExperience()">Abrir com Amor ❤️</button>
+    </div>
+
+    <audio id="musica" loop>
+        <source src="duasvidas.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="slides">
+                <img src="ft1.jpg" alt="Foto 1">
+                <img src="ft2.jpg" alt="Foto 2">
+                <img src="ft3.jpg" alt="Foto 3">
+                <img src="ft4.jpg" alt="Foto 4">
+                <img src="ft5.jpg" alt="Foto 5">
+                <img src="ft6.jpg" alt="Foto 6">
+                <img src="ft7.jpg" alt="Foto 7">
+                <img src="ft8.jpg" alt="Foto 8">
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>Para minha Princesa</h1>
+        <div class="letter">
+            Princesa,
+            hoje é o Dia da Mulher, mas, sendo sincero, uma mulher como você não deveria ser lembrada apenas em uma data. Você merece ser admirada todos os dias, pelo que é, pela força que tem e pela forma tão única que carrega o seu coração.
+            
+            Eu admiro muito a mulher que você é. Seu jeito, sua forma de ver a vida, de sentir as coisas e até a maneira como conversa comigo… tudo isso faz com que você se torne cada vez mais especial. Existem muitas pessoas no mundo, mas poucas conseguem tocar a gente de verdade. Você é uma dessas.
+            
+            Você tem essa capacidade bonita de ocupar espaço nos meus pensamentos de forma natural. Aquela vontade de saber se você está bem, se dormiu bem, como foi seu dia… coisas simples, mas que mostram o quanto alguém se torna importante.
+            
+            E hoje, nesse Dia da Mulher, eu só quero que você nunca esqueça o valor que tem. Você é forte, especial e merece alguém que enxergue tudo isso com verdade.
+            
+            Se tem algo que eu desejo, é continuar tendo a chance de estar presente na sua vida, te admirando, te respeitando e descobrindo cada vez mais a mulher incrível que você é.
+            
+            Feliz Dia da Mulher, princesa.
+            
+            E que você nunca duvide: mulheres especiais existem… e você é uma delas. 🤍
+        </div>
+    </div>
+
+    <footer>
+
+    </footer>
+
+    <script>
+        function startExperience() {
+            // Tocar música
+            document.getElementById('musica').play();
+            
+            // Mostrar Player Spotify
+            document.getElementById('player').style.display = 'flex';
+            
+            // Remover overlay com animação
+            const overlay = document.getElementById('overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 1000);
+
+            // Iniciar chuva de emojis
+            setInterval(criarPetala, 450);
+        }
+
+        function criarPetala() {
+            const emojis = ['🌸', '❤️', '🌹', '✨', '💖', '🤍'];
+            const petala = document.createElement('div');
+            petala.classList.add('petala');
+            petala.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            petala.style.left = Math.random() * 100 + 'vw';
+            petala.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            petala.style.opacity = Math.random();
+            document.body.appendChild(petala);
+
+            setTimeout(() => {
+                petala.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
